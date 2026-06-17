@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+}
+
+@layer base {
+  body {
+    background-color: #223322;
+    color: #FDFBF7;
+    overflow-x: hidden;
+  }
+}
+
+.pitch-gradient {
+  background: radial-gradient(circle at 50% 100%, #3D5A32 0%, #1A2E1A 100%);
+}
+
+.goal-net {
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 15px 15px;
+}
+
+.btn-nature {
+  background-color: #8B5E3C;
+  border-bottom: 4px solid #5D3E28;
+  color: #FDFBF7;
+}
+
+.btn-nature:hover {
+  background-color: #9d6d48;
+}
+
+.btn-nature:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
