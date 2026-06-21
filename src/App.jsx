@@ -17,22 +17,7 @@ import {
   playCrowdDisappointment,
 } from "./utils/audio";
 
-// Type definitions
-type Direction = "left" | "center" | "right";
-type Elevation = "top" | "medium" | "bottom";
-type Sector = `${Direction}-${Elevation}`;
-type Outcome = "goal" | "save" | "post" | "out";
 
-interface Particle {
-  id: number;
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
-  color: string;
-  size: number;
-  duration: number;
-}
 
 export default function App() {
   // Game states
@@ -41,22 +26,22 @@ export default function App() {
   const [misses, setMisses] = useState(0);
   const [streak, setStreak] = useState(0);
   const [activeShotIndex, setActiveShotIndex] = useState(0);
-  const [shotsHistory, setShotsHistory] = useState<Array<"goal" | "save" | "post" | "out" | null>>([
+  const [shotsHistory, setShotsHistory] = useState([
     null,
     null,
     null,
     null,
     null,
   ]);
-  const [difficulty, setDifficulty] = useState<"easy" | "normal" | "hard">("normal");
+  const [difficulty, setDifficulty] = useState("normal");
   const [soundEnabled, setSoundEnabled] = useState(true);
 
   // Ball & Keeper status
-  const [gameState, setGameState] = useState<"idle" | "shooting" | "round_end" | "game_over">("idle");
-  const [selectedDirection, setSelectedDirection] = useState<Direction | null>(null);
-  const [selectedElevation, setSelectedElevation] = useState<Elevation | null>(null);
-  const [hoveredDirection, setHoveredDirection] = useState<Direction | null>(null);
-  const [hoveredSector, setHoveredSector] = useState<Sector | null>(null);
+  const [gameState, setGameState] = useState("idle");
+  const [selectedDirection, setSelectedDirection] = useState(null);
+  const [selectedElevation, setSelectedElevation] = useState(null);
+  const [hoveredDirection, setHoveredDirection] = useState(null);
+  const [hoveredSector, setHoveredSector] = useState(null);
 
   // Physics coordinates expressed in % of parent Arena container
   // Spot position (the penalty kick spot in the foreground)
@@ -67,16 +52,16 @@ export default function App() {
   const [ballY, setBallY] = useState(spotY);
   const [ballScale, setBallScale] = useState(1.1);
   const [ballRotation, setBallRotation] = useState(0);
-  const [ballState, setBallState] = useState<"spot" | "flying" | "goal" | "saved" | "post_bounce">("spot");
+  const [ballState, setBallState] = useState("spot");
 
   // Goalkeeper coordinates (Centered starting coords)
   const idleKeeperX = 50;
   const idleKeeperY = 56;
   const [keeperX, setKeeperX] = useState(idleKeeperX);
   const [keeperY, setKeeperY] = useState(idleKeeperY);
-  const [keeperState, setKeeperState] = useState<"idle" | "diving" | "glory_save" | "disappointed">("idle");
-  const [diveDirection, setDiveDirection] = useState<Direction | null>(null);
-  const [diveElevation, setDiveElevation] = useState<Elevation | null>(null);
+  const [keeperState, setKeeperState] = useState("idle");
+  const [diveDirection, setDiveDirection] = useState(null);
+  const [diveElevation, setDiveElevation] = useState(null);
 
   // GUI Feedback overlay text
   const [feedback, setFeedback] = useState("CHOOSE YOUR ANGLE");
@@ -85,10 +70,10 @@ export default function App() {
   const [netBulging, setNetBulging] = useState(false);
 
   // Particles state
-  const [particles, setParticles] = useState<Particle[]>([]);
+  const [particles, setParticles] = useState([]);
 
   // Sound play handler that respects mute toggle
-  const triggerSound = (fn: () => void) => {
+  const triggerSound = (fn) => {
     if (soundEnabled) {
       fn();
     }
@@ -104,8 +89,8 @@ export default function App() {
   }, []);
 
   // Utility to launch graphics particles in % metrics
-  const spawnParticles = (x: number, y: number, colorPreset: "gold" | "neon" | "glove" | "woodwork") => {
-    const newParticles: Particle[] = [];
+  const spawnParticles = (x, y, colorPreset) => {
+    const newParticles = [];
     const count = 35;
     const colors =
       colorPreset === "gold"
@@ -136,7 +121,7 @@ export default function App() {
   };
 
   // Handle difficulty setup
-  const handleDifficultyChange = (diff: "easy" | "normal" | "hard") => {
+  const handleDifficultyChange = (diff) => {
     setDifficulty(diff);
   };
 
@@ -190,14 +175,14 @@ export default function App() {
   };
 
   // CORE SHOOT FUNCTION
-  const shoot = (dir: Direction, elevParam?: Elevation) => {
+  const shoot = (dir, elevParam) => {
     if (gameState !== "idle") return;
 
     setGameState("shooting");
     setSelectedDirection(dir);
 
     // Roll random elevation if not explicitly provided (e.g. from buttons)
-    const rolledElev: Elevation = elevParam || (["top", "medium", "bottom"][Math.floor(Math.random() * 3)] as Elevation);
+    const rolledElev = elevParam || (["top", "medium", "bottom"][Math.floor(Math.random() * 3)]);
     setSelectedElevation(rolledElev);
 
     // Play referee kick whistle and foot kick thump
@@ -228,8 +213,8 @@ export default function App() {
 
     // Goalkeeper AI decision making
     // Determine the direction keeper dives
-    let gkDir: Direction = "center";
-    let gkElev: Elevation = "medium";
+    let gkDir = "center";
+    let gkElev = "medium";
 
     // Establish saving probabilities depending on selected game difficulty
     // Rookie: Goalie usually guesses wrong side
@@ -249,12 +234,12 @@ export default function App() {
     if (guessedCorrectSide) {
       gkDir = dir;
       // High chance of guessing correct elevation too when guessed correct side
-      gkElev = Math.random() < 0.7 ? rolledElev : (["top", "medium", "bottom"][Math.floor(Math.random() * 3)] as Elevation);
+      gkElev = Math.random() < 0.7 ? rolledElev : (["top", "medium", "bottom"][Math.floor(Math.random() * 3)]);
     } else {
       // Divert keeper to a wrong zone. Select randomly from other zones
-      const otherDirs = (["left", "center", "right"] as const).filter((d) => d !== dir);
+      const otherDirs = (["left", "center", "right"]).filter((d) => d !== dir);
       gkDir = otherDirs[Math.floor(Math.random() * otherDirs.length)];
-      gkElev = ["top", "medium", "bottom"][Math.floor(Math.random() * 3)] as Elevation;
+      gkElev = ["top", "medium", "bottom"][Math.floor(Math.random() * 3)];
     }
 
     setDiveDirection(gkDir);
@@ -277,7 +262,7 @@ export default function App() {
 
     // Introduce woodworks luck - very rare chance of hitting crossbar or posts
     // If target rolls are right near boundaries (X ~ 15% or 85%, or Y ~ 30%)
-    let outcome: Outcome = "goal";
+    let outcome = "goal";
     
     const nearLeftPost = Math.abs(targetX - 15) < 2.5;
     const nearRightPost = Math.abs(targetX - 85) < 2.5;
@@ -553,9 +538,9 @@ export default function App() {
               id="goal-mouth-grid"
               className="absolute top-[15%] bottom-[35%] left-[15%] right-[15%] grid grid-cols-3 grid-rows-3 z-20 gap-1 p-1"
             >
-              {(["top", "medium", "bottom"] as elevation[]).map((elev) => {
-                return (["left", "center", "right"] as direction[]).map((dir) => {
-                  const sectorName: Sector = `${dir}-${elev}`;
+              {["top", "medium", "bottom"].map((elev) => {
+                return (["left", "center", "right"]).map((dir) => {
+                  const sectorName = `${dir}-${elev}`;
                   const isHovered = hoveredSector === sectorName;
                   
                   return (
@@ -800,7 +785,7 @@ export default function App() {
 
         {/* Action button rows for kicking */}
         <div className="w-full grid grid-cols-3 gap-3 md:gap-4 p-1">
-          {(["left", "center", "right"] as direction[]).map((dir) => {
+          {["left", "center", "right"].map((dir) => {
             let directIcon = "←";
             if (dir === "center") directIcon = "↑";
             if (dir === "right") directIcon = "→";
@@ -856,7 +841,3 @@ export default function App() {
     </div>
   );
 }
-
-// Map typings
-type direction = Direction;
-type elevation = Elevation;

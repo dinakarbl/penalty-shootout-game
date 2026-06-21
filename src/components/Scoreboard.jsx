@@ -1,20 +1,6 @@
 import React from "react";
 import { Flame, Volume2, VolumeX } from "lucide-react";
 
-interface ScoreboardProps {
-  goals: number;
-  saves: number;
-  misses: number;
-  streak: number;
-  activeShotIndex: number;
-  shotsHistory: Array<"goal" | "save" | "post" | "out" | null>;
-  difficulty: "easy" | "normal" | "hard";
-  onDifficultyChange: (diff: "easy" | "normal" | "hard") => void;
-  soundEnabled: boolean;
-  onToggleSound: () => void;
-  gameState: "idle" | "shooting" | "round_end" | "game_over";
-}
-
 export default function Scoreboard({
   goals,
   saves,
@@ -27,7 +13,7 @@ export default function Scoreboard({
   soundEnabled,
   onToggleSound,
   gameState,
-}: ScoreboardProps2) {
+}) {
   // Let's declare our typings clearly
   return (
     <div
@@ -53,7 +39,7 @@ export default function Scoreboard({
           
           {/* Difficulty Pickers (Disabled during active kick) */}
           <div className="flex gap-1 bg-[#f4ebd0]/50 p-0.5 rounded-lg border border-[#d6cfb3] mt-1">
-            {(["easy", "normal", "hard"] as const).map((diff) => (
+            {["easy", "normal", "hard"].map((diff) => (
               <button
                 key={diff}
                 id={`btn-diff-${diff}`}
@@ -190,6 +176,3 @@ export default function Scoreboard({
     </div>
   );
 }
-
-// Ensure the code builds safely with correct exports
-interface ScoreboardProps2 extends ScoreboardProps {}

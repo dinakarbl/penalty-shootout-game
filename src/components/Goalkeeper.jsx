@@ -1,21 +1,13 @@
 import React from "react";
 import { motion } from "motion/react";
 
-interface GoalkeeperProps {
-  state: "idle" | "diving" | "glory_save" | "disappointed";
-  targetX: number; // percentage on parent grid (e.g. 50)
-  targetY: number; // percentage on parent grid (e.g. 58)
-  diveDirection?: "left" | "center" | "right" | null;
-  diveElevation?: "top" | "medium" | "bottom" | null;
-}
-
 export default function Goalkeeper({
   state,
   targetX,
   targetY,
   diveDirection,
   diveElevation,
-}: GoalkeeperProps) {
+}) {
   // Determine rotation based on state and direction
   let rotation = 0;
   let scaleY = 1.0;

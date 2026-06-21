@@ -3,11 +3,11 @@
  * Safe to call, handles browser audio security policies lazily.
  */
 
-let audioCtx: AudioContext | null = null;
+let audioCtx = null;
 
 function getAudioContext() {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   }
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
